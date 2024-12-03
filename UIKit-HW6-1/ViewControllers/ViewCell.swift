@@ -9,7 +9,7 @@ import UIKit
 
 class ViewCell : UITableViewCell {
     static let identifier = "CardCell"
-    let margin : CGFloat = 20
+    let margin : CGFloat = 20 * scaleMultiplier()
     
     public func setupCell(card: CardContent) {
         authorLabel.text = "\(card.name) \(card.surname)"
@@ -29,7 +29,7 @@ class ViewCell : UITableViewCell {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.backgroundColor = Colorizer(.gray)
         $0.layer.cornerRadius = 20
-        $0.addSubviews(authorLabel, headerLabel, dateLabel, descriptionLabel, nextButton, photoImageView)
+        $0.addSubviews(headerView, authorLabel, headerLabel, dateLabel, descriptionLabel, nextButton, photoImageView)
         return $0
     }(UIView())
     
@@ -42,6 +42,10 @@ class ViewCell : UITableViewCell {
         $0.clipsToBounds = true
         return $0
     }(UIImageView())
+    lazy var headerView = {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        return $0
+    }(UIView())
     lazy var headerLabel = setupLabel(textStyle: .megaHeader)
     lazy var dateLabel = setupLabel(textStyle: .subDescription, textAlignment: .right)
     lazy var descriptionLabel = setupLabel(textStyle: .description)
@@ -61,15 +65,21 @@ class ViewCell : UITableViewCell {
             cardView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -margin),
             cardView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -1/2 * margin),
             
-            dateLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: margin),
-            dateLabel.widthAnchor.constraint(equalToConstant: 85), // ОЧЕНЬ ПЛОХО
-            dateLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -margin),
-
-            authorLabel.topAnchor.constraint(equalTo:  cardView.topAnchor, constant: margin),
-            authorLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: margin),
-            authorLabel.trailingAnchor.constraint(equalTo: dateLabel.leadingAnchor, constant: -margin),
+            headerView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: margin),
+            headerView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: margin),
+            headerView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -margin),
             
-            photoImageView.topAnchor.constraint(equalTo: authorLabel.bottomAnchor, constant: 1/2 * margin), // ПРОБЛЕМА, ЕСЛИ LABEL ВЫШЕ, ЧЕМ HEADER
+            dateLabel.topAnchor.constraint(equalTo: headerView.topAnchor),
+            dateLabel.leadingAnchor.constraint(equalTo: headerView.centerXAnchor, constant: 2 * margin),
+            dateLabel.trailingAnchor.constraint(equalTo: headerView.trailingAnchor),
+            dateLabel.bottomAnchor.constraint(equalTo: headerView.bottomAnchor),
+            
+            authorLabel.topAnchor.constraint(equalTo: headerView.topAnchor),
+            authorLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor),
+            authorLabel.trailingAnchor.constraint(equalTo: headerView.centerXAnchor, constant: margin),
+            authorLabel.bottomAnchor.constraint(equalTo: headerView.bottomAnchor),
+
+            photoImageView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 1/2 * margin),
             photoImageView.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: margin),
             photoImageView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -margin),
             photoImageView.heightAnchor.constraint(equalTo: photoImageView.widthAnchor, multiplier: 9/16),
